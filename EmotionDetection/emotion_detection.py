@@ -13,12 +13,15 @@ def emotion_detector(text_to_analyze):
         }
     }
 
-    response = requests.post(url, headers=headers, json=input_text)
-    response.raise_for_status()
-
-    result = json.loads(response.text)
-    scores = result['emotionPredictions'][0]['emotion']
-    scores['dominant_emotion'] = max(scores, key = scores.get)
+    try:
+        response = requests.post(url, headers=headers, json=input_text, timeout=5)
+        response.raise_for_status()
+        result = json.loads(response.text)
+        scores = result['emotionPredictions'][0]['emotion']
+        scores['dominant_emotion'] = max(scores, key = scores.get)
+    except requests.exceptions.RequestException as e:
+        print(f"API request failed: {e}")
+        return None
     
     return scores
 

@@ -1,15 +1,20 @@
 from flask import Flask, request, render_template
 from EmotionDetection import emotion_detector
+import logging
 
 app = Flask(__name__)
+logging.basicConfig(level=logging.DEBUG)
+logger = app.logger
 
 @app.route('/')
 def index():
+    logger.debug("Rendering index.html")
     return render_template('index.html')
 
 @app.route("/emotionDetector", methods=["GET"])
 def emotion_detection_app():
-    text_to_analyze = request.args.get('text')
+    text_to_analyze = request.args.get('textToAnalyze')
+    logger.debug(f"Received request for /emotionDetector with textToAnalyze: {text_to_analyze!r}")
 
     if not text_to_analyze:
         return "Error: Please provide", 400
@@ -31,4 +36,4 @@ def emotion_detection_app():
     return output
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=4000)
